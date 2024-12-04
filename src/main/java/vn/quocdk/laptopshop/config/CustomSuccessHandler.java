@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -16,14 +17,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import vn.quocdk.laptopshop.domain.User;
+import vn.quocdk.laptopshop.service.UserService;
 
 public class CustomSuccessHandler implements
         AuthenticationSuccessHandler {
 
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    @Autowired
+    private UserService userService;
 
     protected String determineTargetUrl(final Authentication authentication) {
-
         Map<String, String> roleTargetUrlMap = new HashMap<>();
         roleTargetUrlMap.put("ROLE_User", "/");
         roleTargetUrlMap.put("ROLE_Admin", "/admin");
@@ -35,12 +38,11 @@ public class CustomSuccessHandler implements
                 return roleTargetUrlMap.get(authorityName);
             }
         }
-
         throw new IllegalStateException();
     }
 
-    protected void clearAuthenticationAttributes(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    protected void clearAuthenticationAttributes(final Authentication authentication,
+            HttpSession session) {
         if (session == null) {
             return;
         }
@@ -50,14 +52,20 @@ public class CustomSuccessHandler implements
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
+        RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+        HttpSession session = request.getSession(false);
         String targetUrl = determineTargetUrl(authentication);
-
         if (response.isCommitted()) {
             return;
         }
-
+        // Get email
+        String email = authentication.getName();
+        // Query user from database
+        User user = userService.getUserByEmail(email);
+        System.out.println(user);
+        session.setAttribute("user", user.getFullName());
         redirectStrategy.sendRedirect(request, response, targetUrl);
-        clearAuthenticationAttributes(request);
+        clearAuthenticationAttributes(authentication, session);
     }
 
 }

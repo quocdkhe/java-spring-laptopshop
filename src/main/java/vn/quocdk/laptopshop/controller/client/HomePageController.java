@@ -1,5 +1,7 @@
 package vn.quocdk.laptopshop.controller.client;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -32,7 +34,7 @@ public class HomePageController {
     }
 
     @GetMapping("/")
-    public String getHomepage(Model model) {
+    public String getHomepage(Model model, HttpServletRequest request) {
         List<Product> top4OfficeLaptop = productService.getTop4OfficeLaptop();
         List<Product> top4BusinessLaptop = productService.getTop4BusinessLaptop();
         List<Product> top4ThinLaptop = productService.getTop4ThinLaptop();
@@ -41,7 +43,6 @@ public class HomePageController {
         model.addAttribute("business", top4BusinessLaptop);
         model.addAttribute("thin", top4ThinLaptop);
         model.addAttribute("gaming", top4GamingLaptop);
-
         return "client/homepage/show";
     }
 
