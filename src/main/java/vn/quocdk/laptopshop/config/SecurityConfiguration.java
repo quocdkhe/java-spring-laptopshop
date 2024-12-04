@@ -42,7 +42,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationSuccessHandler customSuccessAuthHandler() {
-        return new CustomSuccessAuthenticationHandler();
+        return new CustomSuccessHandler();
     }
 
     @Bean
@@ -64,7 +64,8 @@ public class SecurityConfiguration {
                         .loginPage("/login")
                         .failureUrl("/login?error")
                         .successHandler(customSuccessAuthHandler())
-                        .permitAll());
+                        .permitAll())
+                        .exceptionHandling(exception -> exception.accessDeniedPage("/access-denied"));
         return http.build();
     }
 

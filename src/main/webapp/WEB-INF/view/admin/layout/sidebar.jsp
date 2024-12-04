@@ -27,8 +27,9 @@
             </div>
         </div>
         <div class="sb-sidenav-footer">
-            <div class="small">Phiên đăng nhập:</div>
-            Admin
+            <div class="small">
+                Phiên đăng nhập: <c:out value="${pageContext.request.userPrincipal.name}" />
+            </div>
         </div>
     </nav>
 </div>

@@ -15,6 +15,8 @@ import org.springframework.ui.Model;
 import vn.quocdk.laptopshop.service.UserService;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class HomePageController {
@@ -70,4 +72,10 @@ public class HomePageController {
         this.userService.handleSaveUser(user);
         return "redirect:/login";
     }
+
+    @GetMapping("/access-denied")
+    public String getDeniedPage() {
+        return "client/auth/denied";
+    }
+    
 }
